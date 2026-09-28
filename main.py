@@ -23,7 +23,7 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fronta
 print("Model ready! Server start ho raha hai...")
 
 DB_FILE = "ulekh_ai.db"
-SECRET_KEY = "ulekh-ai-secret-key-change-this-later"  # demo ke liye theek hai
+SECRET_KEY = os.environ.get("SECRET_KEY", "local-dev-key")
 serializer = URLSafeTimedSerializer(SECRET_KEY)
 
 def hash_password(password: str) -> str:

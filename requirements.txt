@@ -1,0 +1,11 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+fastapi
+uvicorn
+python-multipart
+easyocr
+torch
+torchvision
+opencv-python-headless==4.10.0.84
+numpy
+bcrypt
+itsdangerous
