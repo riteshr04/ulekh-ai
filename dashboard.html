@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ulekh AI - Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 0 0 40px;
+  }
+  header.topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 30px; border-bottom: 1px solid #1e293b; margin-bottom: 30px;
+  }
+  header.topbar .logo { font-weight: 700; color: #38bdf8; font-size: 1.1rem; }
+  header.topbar .userinfo { display: flex; align-items: center; gap: 14px; font-size: 0.85rem; color: #94a3b8; }
+  header.topbar button {
+    background: transparent; border: 1px solid #475569; color: #cbd5e1;
+    padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 0.8rem;
+  }
+  header.topbar button:hover { border-color: #f87171; color: #f87171; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 0 20px; }
+  .card { background: #1e293b; border-radius: 14px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  .upload-group { margin-bottom: 22px; }
+  .upload-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #cbd5e1; }
+  .upload-box {
+    border: 2px dashed #475569; border-radius: 10px; padding: 20px;
+    text-align: center; cursor: pointer; transition: border-color 0.2s; background: #0f172a;
+  }
+  .upload-box:hover { border-color: #38bdf8; }
+  .upload-box input { display: none; }
+  .upload-box .filename { margin-top: 8px; font-size: 0.85rem; color: #38bdf8; }
+  button.submit-btn {
+    width: 100%; padding: 14px; background: #38bdf8; color: #0f172a;
+    font-weight: 700; font-size: 1rem; border: none; border-radius: 10px;
+    cursor: pointer; transition: background 0.2s;
+  }
+  button.submit-btn:hover { background: #0ea5e9; }
+  button.submit-btn:disabled { background: #475569; cursor: not-allowed; }
+  #result { margin-top: 30px; display: none; }
+  .verdict-banner { padding: 16px; border-radius: 10px; font-weight: 700; text-align: center; font-size: 1.1rem; margin-bottom: 20px; }
+  .low { background: #14532d; color: #86efac; }
+  .medium { background: #713f12; color: #fde047; }
+  .high { background: #7f1d1d; color: #fca5a5; }
+  .detail-block { background: #0f172a; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  .detail-block h3 { color: #38bdf8; font-size: 0.95rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .detail-block p, .detail-block li { color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; }
+  .loading { text-align: center; padding: 20px; color: #94a3b8; display: none; }
+  .spinner {
+    border: 3px solid #334155; border-top: 3px solid #38bdf8; border-radius: 50%;
+    width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .history-btn {
+    display: block; width: 100%; text-align: center; margin-top: 16px; padding: 12px;
+    background: transparent; border: 1px solid #475569; color: #94a3b8;
+    border-radius: 10px; cursor: pointer; font-size: 0.9rem;
+  }
+  .history-btn:hover { border-color: #38bdf8; color: #38bdf8; }
+  #historySection { display: none; margin-top: 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  th, td { padding: 8px; text-align: left; border-bottom: 1px solid #334155; color: #cbd5e1; }
+  th { color: #38bdf8; text-transform: uppercase; font-size: 0.7rem; }
+  .badge { padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+  .badge.low { background: #14532d; color: #86efac; }
+  .badge.medium { background: #713f12; color: #fde047; }
+  .badge.high { background: #7f1d1d; color: #fca5a5; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">🛡️ ULEKH AI</div>
+  <div class="userinfo">
+    <span id="userEmail">...</span>
+    <button id="logoutBtn">Log out</button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="card">
+    <form id="screeningForm">
+      <div class="upload-group">
+        <label>📄 Identity Document (ID / Passport / License)</label>
+        <div class="upload-box" onclick="document.getElementById('docInput').click()">
+          <div>Click to select document photo</div>
+          <input type="file" id="docInput" accept="image/*" required>
+          <div class="filename" id="docName"></div>
+        </div>
+      </div>
+
+      <div class="upload-group">
+        <label>🤳 Selfie / Live Photo</label>
+        <div class="upload-box" onclick="document.getElementById('selfieInput').click()">
+          <div>Click to select selfie photo</div>
+          <input type="file" id="selfieInput" accept="image/*" required>
+          <div class="filename" id="selfieName"></div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Screen Document</button>
+    </form>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      Analyzing document, please wait...
+    </div>
+
+    <div id="result"></div>
+
+    <button class="history-btn" id="historyBtn">📋 View Screening History</button>
+    <div id="historySection"></div>
+  </div>
+</div>
+
+<script>
+  fetch('/api/me').then(async res => {
+    if (!res.ok) { window.location.href = '/login'; return; }
+    const data = await res.json();
+    document.getElementById('userEmail').textContent = data.email;
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = '/';
+  });
+
+  const API_URL = "/screen-document";
+  const HISTORY_URL = "/history";
+
+  const docInput = document.getElementById('docInput');
+  const selfieInput = document.getElementById('selfieInput');
+  const form = document.getElementById('screeningForm');
+  const resultDiv = document.getElementById('result');
+  const loadingDiv = document.getElementById('loading');
+  const submitBtn = document.getElementById('submitBtn');
+
+  docInput.addEventListener('change', () => {
+    document.getElementById('docName').textContent = docInput.files[0]?.name || '';
+  });
+  selfieInput.addEventListener('change', () => {
+    document.getElementById('selfieName').textContent = selfieInput.files[0]?.name || '';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!docInput.files[0] || !selfieInput.files[0]) {
+      alert("Please select both document and selfie photos.");
+      return;
+    }
+    const formData = new FormData();
+    formData.append('document', docInput.files[0]);
+    formData.append('selfie', selfieInput.files[0]);
+
+    resultDiv.style.display = 'none';
+    loadingDiv.style.display = 'block';
+    submitBtn.disabled = true;
+
+    try {
+      const response = await fetch(API_URL, { method: 'POST', body: formData });
+      if (!response.ok) throw new Error('Server error: ' + response.status);
+      const data = await response.json();
+      renderResult(data);
+    } catch (err) {
+      resultDiv.innerHTML = `<div class="detail-block"><h3>Error</h3><p>${err.message}</p></div>`;
+      resultDiv.style.display = 'block';
+    } finally {
+      loadingDiv.style.display = 'none';
+      submitBtn.disabled = false;
+    }
+  });
+
+  function renderResult(data) {
+    let verdictClass = 'low';
+    if (data.verdict.includes('MEDIUM')) verdictClass = 'medium';
+    if (data.verdict.includes('HIGH')) verdictClass = 'high';
+
+    resultDiv.innerHTML = `
+      <div class="verdict-banner ${verdictClass}">${data.verdict}</div>
+      <div class="detail-block">
+        <h3>📄 Extracted Text</h3>
+        <p>${data.extracted_text.join(', ') || 'None detected'}</p>
+      </div>
+      <div class="detail-block">
+        <h3>✅ Validated Fields</h3>
+        <p><strong>Dates:</strong> ${data.validated_fields.dates.join(', ') || '—'}</p>
+        <p><strong>ID Numbers:</strong> ${data.validated_fields.id_numbers.join(', ') || '—'}</p>
+        <p><strong>Text Fields:</strong> ${data.validated_fields.text_fields.join(', ') || '—'}</p>
+      </div>
+      <div class="detail-block">
+        <h3>🔍 Tampering Check</h3>
+        <p><strong>Error Level Score:</strong> ${data.tampering_check.error_level_score}</p>
+        <p><strong>Sharpness:</strong> ${data.tampering_check.sharpness}</p>
+      </div>
+      <div class="detail-block">
+        <h3>🤳 Face Verification</h3>
+        <p>${data.face_verification.similarity_score !== undefined
+              ? 'Similarity Score: ' + data.face_verification.similarity_score
+              : data.face_verification.status}</p>
+      </div>
+      <div class="detail-block">
+        <h3>⚠️ Risk Points</h3>
+        <p>${data.risk_points}</p>
+      </div>
+    `;
+    resultDiv.style.display = 'block';
+  }
+
+  const historyBtn = document.getElementById('historyBtn');
+  const historySection = document.getElementById('historySection');
+  let historyVisible = false;
+
+  historyBtn.addEventListener('click', async () => {
+    historyVisible = !historyVisible;
+    if (!historyVisible) {
+      historySection.style.display = 'none';
+      historyBtn.textContent = '📋 View Screening History';
+      return;
+    }
+    historyBtn.textContent = '📋 Hide Screening History';
+    historySection.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:10px;">Loading...</p>';
+    historySection.style.display = 'block';
+
+    try {
+      const res = await fetch(HISTORY_URL);
+      const data = await res.json();
+      renderHistory(data.records);
+    } catch (err) {
+      historySection.innerHTML = '<p style="color:#fca5a5;">Could not load history.</p>';
+    }
+  });
+
+  function renderHistory(records) {
+    if (!records.length) {
+      historySection.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:10px;">No screenings yet.</p>';
+      return;
+    }
+    let rows = records.map(r => {
+      let cls = 'low';
+      if (r.verdict.includes('MEDIUM')) cls = 'medium';
+      if (r.verdict.includes('HIGH')) cls = 'high';
+      return `<tr>
+        <td>${r.timestamp}</td>
+        <td>${r.id_numbers || '—'}</td>
+        <td>${r.risk_points}</td>
+        <td><span class="badge ${cls}">${r.verdict.split(' - ')[0]}</span></td>
+      </tr>`;
+    }).join('');
+    historySection.innerHTML = `
+      <table>
+        <thead><tr><th>Time</th><th>ID Number</th><th>Risk</th><th>Verdict</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+</script>
+</body>
+</html>

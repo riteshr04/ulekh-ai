@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ulekh AI - Fake Identity & Document Screening</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: radial-gradient(circle at top, #1e293b, #0f172a);
+    color: #e2e8f0;
+    min-height: 100vh;
+  }
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 40px; border-bottom: 1px solid #1e293b;
+  }
+  nav .logo { font-size: 1.3rem; font-weight: 700; color: #38bdf8; }
+  nav .links a {
+    color: #cbd5e1; text-decoration: none; margin-left: 16px;
+    padding: 8px 18px; border-radius: 8px; font-size: 0.9rem; font-weight: 600;
+  }
+  nav .links a.primary { background: #38bdf8; color: #0f172a; }
+  nav .links a:hover:not(.primary) { color: #38bdf8; }
+
+  .hero {
+    max-width: 800px; margin: 0 auto; text-align: center;
+    padding: 90px 20px 60px;
+  }
+  .hero .badge {
+    display: inline-block; background: #1e293b; color: #38bdf8;
+    padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 20px;
+    border: 1px solid #334155;
+  }
+  .hero h1 { font-size: 2.8rem; line-height: 1.2; margin-bottom: 20px; }
+  .hero h1 span { color: #38bdf8; }
+  .hero p { color: #94a3b8; font-size: 1.05rem; margin-bottom: 32px; line-height: 1.6; }
+  .hero .cta a {
+    display: inline-block; padding: 14px 30px; border-radius: 10px;
+    text-decoration: none; font-weight: 700; margin: 0 8px;
+  }
+  .cta .start { background: #38bdf8; color: #0f172a; }
+  .cta .learn { border: 1px solid #475569; color: #cbd5e1; }
+
+  .features {
+    max-width: 1000px; margin: 0 auto; padding: 40px 20px 100px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;
+  }
+  .feature-card {
+    background: #1e293b; border-radius: 14px; padding: 26px;
+    border: 1px solid #334155;
+  }
+  .feature-card .icon { font-size: 1.8rem; margin-bottom: 12px; }
+  .feature-card h3 { font-size: 1.05rem; margin-bottom: 8px; color: #f1f5f9; }
+  .feature-card p { color: #94a3b8; font-size: 0.88rem; line-height: 1.5; }
+
+  footer { text-align: center; padding: 24px; color: #475569; font-size: 0.8rem; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">🛡️ ULEKH AI</div>
+  <div class="links">
+    <a href="/login">Log in</a>
+    <a href="/signup" class="primary">Sign up</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="badge">AI-Powered Identity Verification</div>
+  <h1>Detect Fake Documents & <span>Verify Identity</span> in Seconds</h1>
+  <p>Ulekh AI reads identity documents, validates their fields, checks for tampering,
+     verifies the holder's face, and generates a clear risk score — helping catch
+     fraudulent IDs before they cause harm.</p>
+  <div class="cta">
+    <a href="/signup" class="start">Get Started Free</a>
+    <a href="/login" class="learn">I already have an account</a>
+  </div>
+</div>
+
+<div class="features">
+  <div class="feature-card">
+    <div class="icon">📄</div>
+    <h3>Smart OCR Extraction</h3>
+    <p>Automatically reads names, ID numbers, and dates from any identity document photo.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">✅</div>
+    <h3>Field Validation</h3>
+    <p>Checks extracted data against expected formats to catch inconsistencies.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">🔍</div>
+    <h3>Tampering Detection</h3>
+    <p>Analyzes image compression and sharpness to flag possibly edited documents.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">🤳</div>
+    <h3>Face Verification</h3>
+    <p>Compares the document photo against a live selfie to confirm identity.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">⚠️</div>
+    <h3>Risk Scoring</h3>
+    <p>Combines every signal into a single Low / Medium / High risk verdict.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">📋</div>
+    <h3>Audit Trail</h3>
+    <p>Every screening is securely logged so records can be reviewed later.</p>
+  </div>
+</div>
+
+<footer>Ulekh AI — Prototype for demonstration purposes</footer>
+</body>
+</html>

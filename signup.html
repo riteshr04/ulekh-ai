@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sign Up - Ulekh AI</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0f172a; color: #e2e8f0;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: #1e293b; border-radius: 14px; padding: 36px;
+    width: 100%; max-width: 380px; border: 1px solid #334155;
+  }
+  .logo { text-align: center; font-size: 1.4rem; font-weight: 700; color: #38bdf8; margin-bottom: 6px; }
+  .subtitle { text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 26px; }
+  label { display: block; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 6px; font-weight: 600; }
+  input {
+    width: 100%; padding: 11px 14px; border-radius: 8px; border: 1px solid #475569;
+    background: #0f172a; color: #e2e8f0; margin-bottom: 16px; font-size: 0.9rem;
+  }
+  input:focus { outline: none; border-color: #38bdf8; }
+  button {
+    width: 100%; padding: 12px; background: #38bdf8; color: #0f172a;
+    font-weight: 700; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+  }
+  button:hover { background: #0ea5e9; }
+  .error { color: #fca5a5; font-size: 0.85rem; margin-bottom: 14px; display: none; }
+  .info { color: #38bdf8; font-size: 0.85rem; margin-bottom: 14px; display: none; background: #0f172a; padding: 10px; border-radius: 8px; }
+  .switch { text-align: center; margin-top: 18px; font-size: 0.85rem; color: #94a3b8; }
+  .switch a { color: #38bdf8; text-decoration: none; }
+  #otpStep { display: none; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🛡️ ULEKH AI</div>
+  <div class="subtitle">Create your account</div>
+
+  <div class="error" id="errorBox"></div>
+  <div class="info" id="infoBox"></div>
+
+  <form id="signupForm">
+    <label>Email</label>
+    <input type="email" id="email" required placeholder="you@example.com">
+    <label>Password</label>
+    <input type="password" id="password" required placeholder="At least 6 characters">
+    <button type="submit">Continue</button>
+  </form>
+
+  <form id="otpForm">
+    <div id="otpStep">
+      <label>Enter the OTP</label>
+      <input type="text" id="otp" required placeholder="4-digit code" maxlength="4">
+      <button type="submit">Verify & Create Account</button>
+    </div>
+  </form>
+
+  <div class="switch">Already have an account? <a href="/login">Log in</a></div>
+</div>
+
+<script>
+  const signupForm = document.getElementById('signupForm');
+  const otpForm = document.getElementById('otpForm');
+  const otpStep = document.getElementById('otpStep');
+  const errorBox = document.getElementById('errorBox');
+  const infoBox = document.getElementById('infoBox');
+  let currentEmail = "";
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.style.display = 'block';
+    infoBox.style.display = 'none';
+  }
+
+  signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorBox.style.display = 'none';
+    currentEmail = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const formData = new FormData();
+    formData.append('email', currentEmail);
+    formData.append('password', password);
+
+    try {
+      const res = await fetch('/api/signup', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok) { showError(data.detail); return; }
+
+      signupForm.style.display = 'none';
+      otpStep.style.display = 'block';
+      infoBox.textContent = "Testing mode — your OTP is: " + data.demo_otp;
+      infoBox.style.display = 'block';
+    } catch (err) {
+      showError("Something went wrong. Try again.");
+    }
+  });
+
+  otpForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorBox.style.display = 'none';
+    const otp = document.getElementById('otp').value;
+
+    const formData = new FormData();
+    formData.append('email', currentEmail);
+    formData.append('otp', otp);
+
+    try {
+      const res = await fetch('/api/verify-otp', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok) { showError(data.detail); return; }
+      window.location.href = "/dashboard";
+    } catch (err) {
+      showError("Something went wrong. Try again.");
+    }
+  });
+</script>
+</body>
+</html>

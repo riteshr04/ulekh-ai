@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Log In - Ulekh AI</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0f172a; color: #e2e8f0;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: #1e293b; border-radius: 14px; padding: 36px;
+    width: 100%; max-width: 380px; border: 1px solid #334155;
+  }
+  .logo { text-align: center; font-size: 1.4rem; font-weight: 700; color: #38bdf8; margin-bottom: 6px; }
+  .subtitle { text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 26px; }
+  label { display: block; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 6px; font-weight: 600; }
+  input {
+    width: 100%; padding: 11px 14px; border-radius: 8px; border: 1px solid #475569;
+    background: #0f172a; color: #e2e8f0; margin-bottom: 16px; font-size: 0.9rem;
+  }
+  input:focus { outline: none; border-color: #38bdf8; }
+  button {
+    width: 100%; padding: 12px; background: #38bdf8; color: #0f172a;
+    font-weight: 700; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+  }
+  button:hover { background: #0ea5e9; }
+  .error { color: #fca5a5; font-size: 0.85rem; margin-bottom: 14px; display: none; }
+  .switch { text-align: center; margin-top: 18px; font-size: 0.85rem; color: #94a3b8; }
+  .switch a { color: #38bdf8; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🛡️ ULEKH AI</div>
+  <div class="subtitle">Log in to your account</div>
+
+  <div class="error" id="errorBox"></div>
+
+  <form id="loginForm">
+    <label>Email</label>
+    <input type="email" id="email" required placeholder="you@example.com">
+    <label>Password</label>
+    <input type="password" id="password" required placeholder="Your password">
+    <button type="submit">Log In</button>
+  </form>
+
+  <div class="switch">Don't have an account? <a href="/signup">Sign up</a></div>
+</div>
+
+<script>
+  const loginForm = document.getElementById('loginForm');
+  const errorBox = document.getElementById('errorBox');
+
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorBox.style.display = 'none';
+
+    const formData = new FormData();
+    formData.append('email', document.getElementById('email').value);
+    formData.append('password', document.getElementById('password').value);
+
+    try {
+      const res = await fetch('/api/login', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok) {
+        errorBox.textContent = data.detail;
+        errorBox.style.display = 'block';
+        return;
+      }
+      window.location.href = "/dashboard";
+    } catch (err) {
+      errorBox.textContent = "Something went wrong. Try again.";
+      errorBox.style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>
