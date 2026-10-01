@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 import cv2
 import numpy as np
-import easyocr
+from rapidocr_onnxruntime import RapidOCR
 import re
 import shutil
 import os
@@ -18,7 +18,7 @@ app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 print("OCR model load ho raha hai, thoda time lagega...")
-reader = easyocr.Reader(['en'])
+reader = RapidOCR()
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 print("Model ready! Server start ho raha hai...")
 
@@ -223,8 +223,9 @@ async def screen_document(request: Request, document: UploadFile = File(...), se
     risk_points = 0
     response = {}
 
-    result = reader.readtext(doc_path)
-    extracted_data = [d[1].strip() for d in result if d[2] > 0.5]
+    result, _ = reader(doc_path)
+    result = result or [] 
+    extracted_data = [d[1].strip() for d in result if float(d[2]) > 0.5]
     response["extracted_text"] = extracted_data
     if len(extracted_data) < 2:
         risk_points += 1
